@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora</title>
+  <link rel="stylesheet" href="estilos.css">
+
+  <style>
+    @charset "UTF-8";
+
+/* === Configuración general === */
+body {
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  font-family: 'Poppins', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+/* === Contenedor principal === */
+.calculator {
+  background: #1e1e2f;
+  padding: 25px;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  width: 320px;
+}
+
+/* === Pantalla === */
+.display {
+  background: #2b2b40;
+  color: #fff;
+  font-size: 2.2rem;
+  text-align: right;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  min-height: 60px;
+  word-wrap: break-word;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* === Botones === */
+.buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.btn {
+  background: #3a3a57;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+  background: #505072;
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+/* === Botones especiales === */
+.operator {
+  background: #ff8c00;
+}
+
+.operator:hover {
+  background: #ffad42;
+}
+
+.equal {
+  background: #00b894;
+  grid-column: span 1;
+}
+
+.equal:hover {
+  background: #00d8aa;
+}
+
+.zero {
+  grid-column: span 2;
+}
+
+/* === Responsive === */
+@media (max-width: 400px) {
+  .calculator {
+    width: 90%;
+  }
+  .display {
+    font-size: 1.8rem;
+  }
+  .btn {
+    font-size: 1rem;
+    padding: 12px;
+  }
+}
+
+  </style>
+</head>
+
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+
+    <div class="buttons">
+      <button class="btn" onclick="clearDisplay()">C</button>
+      <button class="btn" onclick="deleteLast()">⌫</button>
+      <button class="btn" onclick="appendOperator('%')">%</button>
+      <button class="btn operator" onclick="appendOperator('/')">÷</button>
+
+      <button class="btn" onclick="appendNumber('7')">7</button>
+      <button class="btn" onclick="appendNumber('8')">8</button>
+      <button class="btn" onclick="appendNumber('9')">9</button>
+      <button class="btn operator" onclick="appendOperator('*')">×</button>
+
+      <button class="btn" onclick="appendNumber('4')">4</button>
+      <button class="btn" onclick="appendNumber('5')">5</button>
+      <button class="btn" onclick="appendNumber('6')">6</button>
+      <button class="btn operator" onclick="appendOperator('-')">−</button>
+
+      <button class="btn" onclick="appendNumber('1')">1</button>
+      <button class="btn" onclick="appendNumber('2')">2</button>
+      <button class="btn" onclick="appendNumber('3')">3</button>
+      <button class="btn operator" onclick="appendOperator('+')">+</button>
+
+      <button class="btn zero" onclick="appendNumber('0')">0</button>
+      <button class="btn" onclick="appendNumber('.')">.</button>
+      <button class="btn equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendNumber(num) {
+      if (display.textContent === '0') display.textContent = '';
+      display.textContent += num;
+    }
+
+    function appendOperator(op) {
+      const lastChar = display.textContent.slice(-1);
+      if ("+-*/%".includes(lastChar)) return;
+      display.textContent += op;
+    }
+
+    function clearDisplay() {
+      display.textContent = '0';
+    }
+
+    function deleteLast() {
+      display.textContent = display.textContent.slice(0, -1) || '0';
+    }
+
+    function calculate() {
+      try {
+        display.textContent = eval(display.textContent.replace('÷', '/').replace('×', '*'));
+      } catch {
+        display.textContent = 'Error';
+      }
+    }
+  </script>
+</body>
+</html>
