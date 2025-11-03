@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calculadora estilo iPhone</title>
+
+    <style>
+      body {
+        background-color: #000;
+        font-family: "Helvetica Neue", Arial, sans-serif;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        margin: 0;
+      }
+
+      h1 {
+        color: #f1f1f1;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.6em;
+      }
+
+      /* pantalla */
+      #display {
+        width: 260px;
+        text-align: right;
+        background-color: #1c1c1c;
+        color: white;
+        font-size: 2.2em;
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 15px;
+        box-shadow: inset 0 -2px 4px rgba(255, 255, 255, 0.05);
+      }
+
+      /* contenedor botones */
+      .container {
+        width: 280px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-gap: 10px;
+      }
+
+      button {
+        height: 60px;
+        border-radius: 50%;
+        border: none;
+        font-size: 1.4em;
+        font-weight: bold;
+        color: white;
+        background-color: #333;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
+      button:hover {
+        opacity: 0.8;
+      }
+
+      /* Colores específicos tipo iPhone */
+      .orange {
+        background-color: #ff9500;
+        color: white;
+      }
+
+      .gray {
+        background-color: #a5a5a5;
+        color: black;
+      }
+
+      .zero {
+        grid-column: span 2;
+        border-radius: 35px;
+        text-align: left;
+        padding-left: 25px;
+      }
+
+      input {
+        width: 100px;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        text-align: center;
+        font-size: 1em;
+        margin: 5px;
+      }
+
+      #resultados {
+        margin-top: 20px;
+        font-size: 1em;
+        text-align: left;
+        width: 260px;
+      }
+
+      span {
+        color: #ff9500;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Calculadora estilo iPhone</h1>
+
+    <!-- Inputs -->
+    <div>
+      <input type="number" id="num1" placeholder="Número 1" />
+      <input type="number" id="num2" placeholder="Número 2" />
+    </div>
+
+    <!-- Pantalla de resultado -->
+    <div id="display">0</div>
+
+    <!-- Botonera estilo iPhone -->
+    <div class="container">
+      <button class="gray" onclick="sumar()">+</button>
+      <button class="gray" onclick="restar()">−</button>
+      <button class="gray" onclick="multiplicar()">×</button>
+      <button class="orange" onclick="dividir()">÷</button>
+
+      <button onclick="potencia()">xʸ</button>
+      <button onclick="raiz()">√</button>
+      <button class="gray" onclick="limpiar()">AC</button>
+      <button class="orange" onclick="mostrarResultado()">=</button>
+    </div>
+
+    <!-- Resultados detallados -->
+    <div id="resultados">
+      <p>Suma: <span id="resultadoSuma">—</span></p>
+      <p>Resta: <span id="resultadoResta">—</span></p>
+      <p>Multiplicación: <span id="resultadoMultiplicacion">—</span></p>
+      <p>División: <span id="resultadoDividir">—</span></p>
+      <p>Potencia: <span id="resultadoPotencia">—</span></p>
+      <p>Raíz: <span id="resultadoRaiz">—</span></p>
+    </div>
+
+    <script>
+      let ultimoResultado = 0;
+
+      function sumar() {
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+        let resultado = num1 + num2;
+        document.getElementById("resultadoSuma").innerHTML = resultado;
+        actualizarDisplay(resultado);
+      }
+
+      function restar() {
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+        let resultado = num1 - num2;
+        document.getElementById("resultadoResta").innerHTML = resultado;
+        actualizarDisplay(resultado);
+      }
+
+      function multiplicar() {
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+        let resultado = num1 * num2;
+        document.getElementById("resultadoMultiplicacion").innerHTML = resultado;
+        actualizarDisplay(resultado);
+      }
+
+      function dividir() {
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+        let resultado =
+          num2 !== 0 ? num1 / num2 : "Error (división por cero)";
+        document.getElementById("resultadoDividir").innerHTML = resultado;
+        actualizarDisplay(resultado);
+      }
+
+      function potencia() {
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+        let resultado = num1 ** num2;
+        document.getElementById("resultadoPotencia").innerHTML = resultado;
+        actualizarDisplay(resultado);
+      }
+
+      function raiz() {
+        let num1 = Number(document.getElementById("num1").value);
+        let num2 = Number(document.getElementById("num2").value);
+        let resultado = 0;
+        if (num1 >= 0) {
+          resultado = Math.pow(num1, 1 / num2);
+        } else {
+          resultado = "Imaginario";
+        }
+        document.getElementById("resultadoRaiz").innerHTML = resultado;
+        actualizarDisplay(resultado);
+      }
+
+      function limpiar() {
+        document.getElementById("num1").value = "";
+        document.getElementById("num2").value = "";
+        document.querySelectorAll("span").forEach((s) => (s.innerHTML = "—"));
+        actualizarDisplay(0);
+      }
+
+      function actualizarDisplay(valor) {
+        document.getElementById("display").innerHTML = valor;
+      }
+
+      function mostrarResultado() {
+        actualizarDisplay("=");
+      }
+    </script>
+  </body>
+</html>
+
+aca ya tengo todo el programa necesito que me digas como organizarlo 

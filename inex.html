@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Moderna</title>
+  <style>
+    @charset "UTF-8";
+
+    /* === Configuración general === */
+    body {
+      /* Imagen + overlay de gradiente como respaldo */
+      background: url('escudo3107.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    /* === Contenedor principal === */
+    .calculator {
+      background: #1e1e2f;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      width: 320px;
+    }
+
+    /* === Pantalla === */
+    .display {
+      background: #2b2b40;
+      color: #fff;
+      font-size: 2.2rem;
+      text-align: right;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      min-height: 60px;
+      word-wrap: break-word;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+    }
+
+    /* === Botones === */
+    .buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .btn {
+      background: #3a3a57;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2rem;
+      padding: 15px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn:hover {
+      background: #505072;
+      transform: translateY(-2px);
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    /* === Botones especiales === */
+    .operator {
+      background: #ff8c00;
+    }
+
+    .operator:hover {
+      background: #ffad42;
+    }
+
+    .equal {
+      background: #00b894;
+      grid-column: span 1;
+    }
+
+    .equal:hover {
+      background: #00d8aa;
+    }
+
+    .zero {
+      grid-column: span 2;
+    }
+
+    /* === Responsive === */
+    @media (max-width: 400px) {
+      .calculator {
+        width: 90%;
+      }
+      .display {
+        font-size: 1.8rem;
+      }
+      .btn {
+        font-size: 1rem;
+        padding: 12px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="calculator">
+    <div class="display" id="display">0</div>
+
+    <div class="buttons">
+      <button class="btn operator" onclick="appendOperator('(')">(</button>
+      <button class="btn operator" onclick="appendOperator(')')">)</button>
+      <button class="btn operator" onclick="appendRoot()">√</button>
+      <button class="btn operator" onclick="appendConstant('π')">π</button>
+
+      <button class="btn" onclick="clearDisplay()">C</button>
+      <button class="btn" onclick="deleteLast()">⌫</button>
+      <button class="btn operator" onclick="appendOperator('%')">%</button>
+      <button class="btn operator" onclick="appendOperator('/')">÷</button>
+
+      <button class="btn" onclick="appendNumber('7')">7</button>
+      <button class="btn" onclick="appendNumber('8')">8</button>
+      <button class="btn" onclick="appendNumber('9')">9</button>
+      <button class="btn operator" onclick="appendOperator('*')">×</button>
+
+      <button class="btn" onclick="appendNumber('4')">4</button>
+      <button class="btn" onclick="appendNumber('5')">5</button>
+      <button class="btn" onclick="appendNumber('6')">6</button>
+      <button class="btn operator" onclick="appendOperator('-')">−</button>
+
+      <button class="btn" onclick="appendNumber('1')">1</button>
+      <button class="btn" onclick="appendNumber('2')">2</button>
+      <button class="btn" onclick="appendNumber('3')">3</button>
+      <button class="btn operator" onclick="appendOperator('+')">+</button>
+
+      <button class="btn zero" onclick="appendNumber('0')">0</button>
+      <button class="btn" onclick="appendNumber('.')">.</button>
+      <button class="btn equal" onclick="calculate()">=</button>
+    </div>
+  </div>
+
+  <script>
+    const display = document.getElementById('display');
+
+    function appendNumber(num) {
+      if (display.textContent === '0' || display.textContent === 'Error') {
+        display.textContent = '';
+      }
+      display.textContent += num;
+    }
+
+    function appendOperator(op) {
+      const lastChar = display.textContent.slice(-1);
+      if ("+-*/".includes(lastChar) && op !== "(" && op !== "√(") return;
+      if (display.textContent === '0' || display.textContent === 'Error') display.textContent = '';
+      display.textContent += op;
+    }
+
+    function needsMultiply() {
+      const lastChar = display.textContent.slice(-1);
+      return /[0-9)π]/.test(lastChar);
+    }
+
+    function appendConstant(cnst) {
+      if (display.textContent === 'Error') display.textContent = '';
+      if (display.textContent === '0') display.textContent = '';
+      if (cnst === 'π') {
+        display.textContent += needsMultiply() ? '*π' : 'π';
+      }
+    }
+
+    function appendRoot() {
+      if (display.textContent === 'Error') display.textContent = '';
+      if (display.textContent === '0') display.textContent = '';
+      display.textContent += needsMultiply() ? '*√(' : '√(';
+    }
+
+    function clearDisplay() {
+      display.textContent = '0';
+    }
+
+    function deleteLast() {
+      if (display.textContent.length <= 1) {
+        display.textContent = '0';
+      } else {
+        display.textContent = display.textContent.slice(0, -1);
+      }
+    }
+
+    function calculate() {
+      const opens = (display.textContent.match(/\(/g) || []).length;
+      const closes = (display.textContent.match(/\)/g) || []).length;
+      let balanced = display.textContent + (opens > closes ? ')'.repeat(opens - closes) : '');
+
+      let expr = balanced
+        .replace(/÷/g, '/')
+        .replace(/×/g, '*')
+        .replace(/−/g, '-')
+        .replace(/%/g, '/100')
+        .replace(/π/g, 'Math.PI')
+        .replace(/√\(/g, 'Math.sqrt(')
+        .replace(/\^/g, '**');
+
+      try {
+        let result = eval(expr);
+        display.textContent = (typeof result === 'number' && isFinite(result))
+          ? result
+          : 'Error';
+      } catch {
+        display.textContent = 'Error';
+      }
+    }
+
+    /* 🎹 Capturar teclas del teclado */
+    document.addEventListener("keydown", (event) => {
+      const key = event.key;
+
+      // Números
+      if (!isNaN(key)) appendNumber(key);
+
+      // Operadores
+      if (["+", "-", "*", "/"].includes(key)) appendOperator(key);
+
+      // Punto
+      if (key === ".") appendNumber(".");
+
+      // Paréntesis
+      if (key === "(" || key === ")") appendOperator(key);
+
+      // Enter o igual
+      if (key === "Enter" || key === "=") {
+        event.preventDefault();
+        calculate();
+      }
+
+      // Backspace
+      if (key === "Backspace") deleteLast();
+
+      // Escape
+      if (key === "Escape") clearDisplay();
+    });
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
