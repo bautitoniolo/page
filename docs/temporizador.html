@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Temporizador con Centésimas</title>
+  <style>
+    body {
+      background: linear-gradient(135deg, #ea130f, #0640be);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      flex-direction: column;
+    }
+
+    .timer-container {
+      background: #1e1e2f;
+      color: white;
+      padding: 50px;
+      border-radius: 25px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      width: 600px;
+    }
+
+    #display {
+      font-size: 6rem;
+      margin-bottom: 40px;
+      background: #2b2b40;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: inset 0 3px 8px rgba(18, 12, 12, 0.3);
+      cursor: text;
+      outline: none;
+      user-select: none;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    button {
+      flex: 1;
+      background: #17c5ec;
+      border: none;
+      padding: 15px;
+      color: white;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #1dc7ee;
+    }
+
+    button.stop {
+      background: #ff7675;
+    }
+
+    button.stop:hover {
+      background: #ff9999;
+    }
+  </style>
+</head>
+<body>
+  <div class="timer-container">
+    <div id="display" contenteditable="true">00:00.00</div>
+
+    <div class="buttons">
+      <button onclick="startTimer()">Iniciar</button>
+      <button class="stop" onclick="pauseTimer()">Pausar</button>
+      <button onclick="resetTimer()">Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    let totalTime = 0; // en milisegundos
+    let timerId = null;
+    let isPaused = false;
+
+    const display = document.getElementById("display");
+
+    // Convierte texto mm:ss.xx a milisegundos
+    function parseTime(text) {
+      const [minSec, cent] = text.split(".");
+      const [min, sec] = minSec.split(":").map(Number);
+      return ((min * 60) + (sec || 0)) * 1000 + (parseInt(cent) * 10 || 0);
+    }
+
+    // Convierte milisegundos a formato mm:ss.xx
+    function formatTime(ms) {
+      const totalSeconds = Math.floor(ms / 1000);
+      const min = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
+      const sec = (totalSeconds % 60).toString().padStart(2, "0");
+      const cent = Math.floor((ms % 1000) / 10).toString().padStart(2, "0");
+      return `${min}:${sec}.${cent}`;
+    }
+
+    function updateDisplay() {
+      display.textContent = formatTime(totalTime);
+    }
+
+    // === FUNCIONALIDAD PRINCIPAL ===
+    function startTimer() {
+      if (timerId) return;
+
+      if (!isPaused) {
+        totalTime = parseTime(display.textContent.trim());
+        if (isNaN(totalTime) || totalTime <= 0) {
+          alert("Por favor escribe un tiempo válido (ejemplo: 01:30.00).");
+          return;
+        }
+      }
+
+      isPaused = false;
+      display.contentEditable = "false";
+
+      const interval = 10; // cada 10 milisegundos (centésima)
+      timerId = setInterval(() => {
+        if (totalTime > 0) {
+          totalTime -= interval;
+          updateDisplay();
+        } else {
+          clearInterval(timerId);
+          timerId = null;
+          display.contentEditable = "true";
+          alert("¡Tiempo terminado!");
+        }
+      }, interval);
+    }
+
+    function pauseTimer() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+        isPaused = true;
+        display.contentEditable = "true";
+      }
+    }
+
+    function resetTimer() {
+      clearInterval(timerId);
+      timerId = null;
+      isPaused = false;
+      totalTime = 0;
+      display.textContent = "00:00.00";
+      display.contentEditable = "true";
+    }
+
+    // === CONTROL DE EDICIÓN ===
+    display.addEventListener("input", () => {
+      let text = display.textContent.replace(/[^0-9.]/g, "");
+      if (text.length === 0) {
+        display.textContent = "00:00.00";
+        placeCaretAtEnd(display);
+        return;
+      }
+
+      // Evita formato inválido
+      if (!text.includes(".")) text += "00";
+      text = text.padStart(6, "0");
+
+      // Reestructura mm:ss.xx
+      const main = text.slice(0, 4);
+      const cent = text.slice(4, 6);
+      const min = main.slice(0, 2);
+      const sec = main.slice(2, 4);
+      display.textContent = `${min}:${sec}.${cent}`;
+      placeCaretAtEnd(display);
+    });
+
+    function placeCaretAtEnd(el) {
+      const range = document.createRange();
+      const sel = window.getSelection();
+      range.selectNodeContents(el);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        startTimer();
+      }
+      if (e.key === " ") {
+        e.preventDefault();
+        pauseTimer();
+      }
+    });
+  </script>
+</body>
+</html>

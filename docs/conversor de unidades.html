@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversor de Unidades</title>
+
+  <style>
+    /* ===== Estilos generales ===== */
+    body {
+      font-family: "Poppins", sans-serif;
+      background-image: url('escudo3107.jpg');
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .converter-container {
+      background: #3b0202;
+      border-radius: 16px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      padding: 30px 40px;
+      width: 360px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .converter-container:hover {
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #e11d0f;
+      font-size: 1.8rem;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #f4f026;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background-color: #748aeb;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #80a5f6;
+    }
+
+    .result {
+      margin-top: 20px;
+      font-size: 1.2rem;
+      color: #ebe710;
+      font-weight: 600;
+      min-height: 24px;
+    }
+
+    footer {
+      margin-top: 20px;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="converter-container">
+    <h1>Conversor de Unidades</h1>
+
+    <input type="number" id="inputValue" placeholder="Ingrese valor" />
+
+    <select id="unitType">
+      <option value="longitud">Longitud</option>
+      <option value="temperatura">Temperatura</option>
+      <option value="peso">Peso</option>
+    </select>
+
+    <select id="fromUnit"></select>
+    <select id="toUnit"></select>
+
+    <button onclick="convert()">Convertir</button>
+
+    <div class="result" id="result"></div>
+
+    <footer>Toniolo maricon</footer>
+  </div>
+
+  <script>
+    // ====== Opciones de unidades ======
+    const units = {
+      longitud: ["Metros", "Kilómetros", "Millas", "Pies"],
+      temperatura: ["Celsius", "Fahrenheit", "Kelvin"],
+      peso: ["Gramos", "Kilogramos", "Libras", "Onzas"]
+    };
+
+    const unitTypeSelect = document.getElementById("unitType");
+    const fromUnitSelect = document.getElementById("fromUnit");
+    const toUnitSelect = document.getElementById("toUnit");
+    const resultDiv = document.getElementById("result");
+
+    // Carga inicial
+    loadUnits("longitud");
+
+    // Actualiza las opciones al cambiar tipo
+    unitTypeSelect.addEventListener("change", (e) => {
+      loadUnits(e.target.value);
+    });
+
+    function loadUnits(type) {
+      fromUnitSelect.innerHTML = "";
+      toUnitSelect.innerHTML = "";
+      units[type].forEach((u) => {
+        fromUnitSelect.innerHTML += `<option value="${u.toLowerCase()}">${u}</option>`;
+        toUnitSelect.innerHTML += `<option value="${u.toLowerCase()}">${u}</option>`;
+      });
+    }
+
+    // ====== Conversión ======
+    function convert() {
+      const value = parseFloat(document.getElementById("inputValue").value);
+      const type = unitTypeSelect.value;
+      const from = fromUnitSelect.value;
+      const to = toUnitSelect.value;
+
+      if (isNaN(value)) {
+        resultDiv.textContent = "⚠️ Ingrese un valor válido";
+        return;
+      }
+
+      let result = 0;
+
+      switch (type) {
+        case "longitud":
+          result = convertLength(value, from, to);
+          break;
+        case "temperatura":
+          result = convertTemperature(value, from, to);
+          break;
+        case "peso":
+          result = convertWeight(value, from, to);
+          break;
+      }
+
+      resultDiv.textContent = `${value} ${from} = ${result.toFixed(3)} ${to}`;
+    }
+
+    // ===== Funciones de conversión =====
+    function convertLength(value, from, to) {
+      const toMeters = {
+        metros: 1,
+        kilómetros: 1000,
+        millas: 1609.34,
+        pies: 0.3048
+      };
+      return (value * toMeters[from]) / toMeters[to];
+    }
+
+    function convertTemperature(value, from, to) {
+      if (from === to) return value;
+      let celsius;
+      if (from === "celsius") celsius = value;
+      else if (from === "fahrenheit") celsius = (value - 32) * (5 / 9);
+      else if (from === "kelvin") celsius = value - 273.15;
+
+      if (to === "celsius") return celsius;
+      if (to === "fahrenheit") return celsius * (9 / 5) + 32;
+      if (to === "kelvin") return celsius + 273.15;
+    }
+
+    function convertWeight(value, from, to) {
+      const toGrams = {
+        gramos: 1,
+        kilogramos: 1000,
+        libras: 453.592,
+        onzas: 28.3495
+      };
+      return (value * toGrams[from]) / toGrams[to];
+    }
+  </script>
+
+</body>
+</html>
