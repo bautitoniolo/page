@@ -9,11 +9,12 @@
 
     /* === Configuración general === */
     body {
-      /* Imagen + overlay de gradiente como respaldo */
+      /* Imagen de fondo más chica y centrada */
       background-image: url('escudo3107.jpg');
-      background-size: cover;
-      background-position: center;
+      background-size: 40%;       /* 🔹 tamaño más chico */
+      background-position: center; /* 🔹 centrada */
       background-repeat: no-repeat;
+      background-color: #0f0f1a;   /* 🔹 color de respaldo oscuro */
       font-family: 'Poppins', sans-serif;
       display: flex;
       justify-content: center;
@@ -24,7 +25,7 @@
 
     /* === Contenedor principal === */
     .calculator {
-      background: #1e1e2f;
+      background: rgba(30, 30, 47, 0.95); /* leve transparencia para ver el fondo */
       padding: 25px;
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
