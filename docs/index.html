@@ -10,22 +10,22 @@
     /* === Configuración general === */
     body {
       background-image: url('escudo3107.jpg');
-      background-size: cover ; /* 🔹 Cambié "cover" por "contain" para que se vea más chica */
+      background-size: 200px; /* 🔹 Tamaño del patrón repetido */
       background-position: center;
-      background-repeat: no-repeat;
+      background-repeat: repeat; /* 🔹 Repetir la imagen en todo el fondo */
       font-family: 'Poppins', sans-serif;
       display: flex;
-      flex-direction: column; /* 🔹 Para apilar la imagen y la calculadora */
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
-      background-color: #101020; /* Fondo de respaldo si la imagen no cubre todo */ 
+      background-color: #101020;
     }
 
     /* === Imagen superior === */
     .logo {
-      width: 180px; /* 🔹 Tamaño ajustable */
+      width: 180px;
       height: auto;
       margin-bottom: 20px;
       border-radius: 12px;
@@ -101,16 +101,13 @@
 </head>
 
 <body>
-  <!-- 🔹 Imagen añadida -->
-  <img src="mi_logo.png" alt="Logo de la Calculadora" class="logo">
-  
+  <!-- 🔹 Imagen añadida sin texto visible -->
+  <img src="mi_logo.png" alt="" class="logo">
+
   <div class="calculator">
     <div class="display" id="display">0</div>
 
     <div class="buttons">
-
-      <button class="btn operator" onclick="appendOperator('(')"
-      <button class="btn operator" onclick="appendOperator(')')"
       <button class="btn operator" onclick="appendOperator('(')">(</button>
       <button class="btn operator" onclick="appendOperator(')')">)</button>
       <button class="btn operator" onclick="appendRoot()">√</button>
@@ -151,9 +148,7 @@
     const display = document.getElementById('display');
 
     function appendNumber(num) {
-      if (display.textContent === '0' || display.textContent === 'Error') {
-        display.textContent = '';
-      }
+      if (display.textContent === '0' || display.textContent === 'Error') display.textContent = '';
       display.textContent += num;
     }
 
@@ -172,9 +167,7 @@
     function appendConstant(cnst) {
       if (display.textContent === 'Error') display.textContent = '';
       if (display.textContent === '0') display.textContent = '';
-      if (cnst === 'π') {
-        display.textContent += needsMultiply() ? '*π' : 'π';
-      }
+      if (cnst === 'π') display.textContent += needsMultiply() ? '*π' : 'π';
     }
 
     function appendRoot() {
@@ -195,11 +188,8 @@
     }
 
     function deleteLast() {
-      if (display.textContent.length <= 1) {
-        display.textContent = '0';
-      } else {
-        display.textContent = display.textContent.slice(0, -1);
-      }
+      if (display.textContent.length <= 1) display.textContent = '0';
+      else display.textContent = display.textContent.slice(0, -1);
     }
 
     function calculate() {
@@ -221,9 +211,7 @@
 
       try {
         let result = eval(expr);
-        display.textContent = (typeof result === 'number' && isFinite(result))
-          ? result
-          : 'Error';
+        display.textContent = (typeof result === 'number' && isFinite(result)) ? result : 'Error';
       } catch {
         display.textContent = 'Error';
       }
@@ -232,16 +220,14 @@
     document.addEventListener("keydown", (event) => {
       const key = event.key;
       if (!isNaN(key)) appendNumber(key);
-      if (["+", "-", "*", "/", "^"] .includes(key)) appendOperator(key);
+      if (["+", "-", "*", "/", "^"].includes(key)) appendOperator(key);
       if (key === ".") appendNumber(".");
       if (key === "(" || key === ")") appendOperator(key);
-      if (key === "Enter" || key === "=") {
-        event.preventDefault();
-        calculate();
-      }
+      if (key === "Enter" || key === "=") { event.preventDefault(); calculate(); }
       if (key === "Backspace") deleteLast();
       if (key === "Escape") clearDisplay();
     });
   </script>
 </body>
 </html>
+
