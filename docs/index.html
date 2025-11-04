@@ -10,7 +10,7 @@
     /* === Configuración general === */
     body {
       background-image: url('escudo3107.jpg');
-      background-size: contain; /* 🔹 Cambié "cover" por "contain" para que se vea más chica */
+      background-size: cover; /* 🔹 Cambié "cover" por "contain" para que se vea más chica */
       background-position: center;
       background-repeat: no-repeat;
       font-family: 'Poppins', sans-serif;
@@ -108,10 +108,18 @@
     <div class="display" id="display">0</div>
 
     <div class="buttons">
+
+      <button class="btn operator" onclick="appendOperator('(')"
+      <button class="btn operator" onclick="appendOperator(')')"
       <button class="btn operator" onclick="appendOperator('(')">(</button>
       <button class="btn operator" onclick="appendOperator(')')">)</button>
       <button class="btn operator" onclick="appendRoot()">√</button>
       <button class="btn operator" onclick="appendConstant('π')">π</button>
+
+      <button class="btn operator" onclick="appendFunc('sin')">sin</button>
+      <button class="btn operator" onclick="appendFunc('cos')">cos</button>
+      <button class="btn operator" onclick="appendFunc('tan')">tan</button>
+      <button class="btn operator" onclick="appendOperator('^')">^</button>
 
       <button class="btn" onclick="clearDisplay()">C</button>
       <button class="btn" onclick="deleteLast()">⌫</button>
@@ -175,6 +183,13 @@
       display.textContent += needsMultiply() ? '*√(' : '√(';
     }
 
+    function appendFunc(name) {
+      if (display.textContent === 'Error') display.textContent = '';
+      if (display.textContent === '0') display.textContent = '';
+      const token = name + '(';
+      display.textContent += needsMultiply() ? ('*' + token) : token;
+    }
+
     function clearDisplay() {
       display.textContent = '0';
     }
@@ -199,6 +214,9 @@
         .replace(/%/g, '/100')
         .replace(/π/g, 'Math.PI')
         .replace(/√\(/g, 'Math.sqrt(')
+        .replace(/sin\(/g, 'Math.sin(')
+        .replace(/cos\(/g, 'Math.cos(')
+        .replace(/tan\(/g, 'Math.tan(')
         .replace(/\^/g, '**');
 
       try {
@@ -214,7 +232,7 @@
     document.addEventListener("keydown", (event) => {
       const key = event.key;
       if (!isNaN(key)) appendNumber(key);
-      if (["+", "-", "*", "/"].includes(key)) appendOperator(key);
+      if (["+", "-", "*", "/", "^"] .includes(key)) appendOperator(key);
       if (key === ".") appendNumber(".");
       if (key === "(" || key === ")") appendOperator(key);
       if (key === "Enter" || key === "=") {
@@ -227,7 +245,6 @@
   </script>
 </body>
 </html>
-
 
 
 
