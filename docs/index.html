@@ -9,17 +9,27 @@
 
     /* === Configuración general === */
     body {
-      /* Imagen + overlay de gradiente como respaldo */
       background-image: url('escudo3107.jpg');
-      background-size: cover;
+      background-size: contain; /* 🔹 Cambié "cover" por "contain" para que se vea más chica */
       background-position: center;
       background-repeat: no-repeat;
       font-family: 'Poppins', sans-serif;
       display: flex;
+      flex-direction: column; /* 🔹 Para apilar la imagen y la calculadora */
       justify-content: center;
       align-items: center;
       height: 100vh;
       margin: 0;
+      background-color: #101020; /* Fondo de respaldo si la imagen no cubre todo */
+    }
+
+    /* === Imagen superior === */
+    .logo {
+      width: 180px; /* 🔹 Tamaño ajustable */
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
     }
 
     /* === Contenedor principal === */
@@ -74,44 +84,26 @@
     }
 
     /* === Botones especiales === */
-    .operator {
-      background: #ff8c00;
-    }
-
-    .operator:hover {
-      background: #ffad42;
-    }
-
-    .equal {
-      background: #00b894;
-      grid-column: span 1;
-    }
-
-    .equal:hover {
-      background: #00d8aa;
-    }
-
-    .zero {
-      grid-column: span 2;
-    }
+    .operator { background: #ff8c00; }
+    .operator:hover { background: #ffad42; }
+    .equal { background: #00b894; grid-column: span 1; }
+    .equal:hover { background: #00d8aa; }
+    .zero { grid-column: span 2; }
 
     /* === Responsive === */
     @media (max-width: 400px) {
-      .calculator {
-        width: 90%;
-      }
-      .display {
-        font-size: 1.8rem;
-      }
-      .btn {
-        font-size: 1rem;
-        padding: 12px;
-      }
+      .calculator { width: 90%; }
+      .display { font-size: 1.8rem; }
+      .btn { font-size: 1rem; padding: 12px; }
+      .logo { width: 130px; }
     }
   </style>
 </head>
 
 <body>
+  <!-- 🔹 Imagen añadida -->
+  <img src="mi_logo.png" alt="Logo de la Calculadora" class="logo">
+
   <div class="calculator">
     <div class="display" id="display">0</div>
 
@@ -219,32 +211,17 @@
       }
     }
 
-    /* 🎹 Capturar teclas del teclado */
     document.addEventListener("keydown", (event) => {
       const key = event.key;
-
-      // Números
       if (!isNaN(key)) appendNumber(key);
-
-      // Operadores
       if (["+", "-", "*", "/"].includes(key)) appendOperator(key);
-
-      // Punto
       if (key === ".") appendNumber(".");
-
-      // Paréntesis
       if (key === "(" || key === ")") appendOperator(key);
-
-      // Enter o igual
       if (key === "Enter" || key === "=") {
         event.preventDefault();
         calculate();
       }
-
-      // Backspace
       if (key === "Backspace") deleteLast();
-
-      // Escape
       if (key === "Escape") clearDisplay();
     });
   </script>
